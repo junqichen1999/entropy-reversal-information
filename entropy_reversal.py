@@ -19,6 +19,22 @@ def distribution(positions, x_values):
     return counts / counts.sum()
 
 
+def kl_divergence_bits(p, q):
+    """Calculate D_KL(p || q) in bits.
+
+    Terms with p_i = 0 contribute zero. If q_i = 0 where p_i > 0,
+    the divergence is mathematically infinite.
+    """
+    p = np.asarray(p, dtype=float)
+    q = np.asarray(q, dtype=float)
+    mask = p > 0
+
+    if np.any(q[mask] == 0):
+        return float("inf")
+
+    return float(np.sum(p[mask] * np.log2(p[mask] / q[mask])))
+
+
 def forward_walk(rng):
     positions = np.full(N_PARTICLES, INITIAL_POSITION, dtype=int)
     history = []
@@ -84,17 +100,47 @@ def make_figures():
     reversed_positions, reverse_entropy = exact_reverse(final_positions, history)
     random_positions, random_entropy = random_backward(final_positions, rng_random)
 
-    x_values = np.arange(-60, 61)
+    x_min = min(initial.min(), final_positions.min(), reversed_positions.min(), random_positions.min())
+    x_max = max(initial.max(), final_positions.max(), reversed_positions.max(), random_positions.max())
+    x_values = np.arange(x_min, x_max + 1)
+
+    initial_distribution = distribution(initial, x_values)
+    forward_distribution = distribution(final_positions, x_values)
+    guided_distribution = distribution(reversed_positions, x_values)
+    random_distribution = distribution(random_positions, x_values)
+
+    history_kl = kl_divergence_bits(guided_distribution, random_distribution)
+
     plt.figure(figsize=(10, 5.5))
-    plt.plot(x_values, distribution(initial, x_values), label="Initial ordered state")
-    plt.plot(x_values, distribution(final_positions, x_values), label="After random diffusion")
-    plt.plot(x_values, distribution(reversed_positions, x_values), label="After exact reversal")
+    plt.plot(x_values, initial_distribution, label="Initial ordered state")
+    plt.plot(x_values, forward_distribution, label="After random diffusion")
+    plt.plot(x_values, guided_distribution, label="After exact reversal")
     plt.xlabel("Position")
     plt.ylabel("Probability")
     plt.title("Particle distributions before and after entropy reversal")
     plt.legend()
     plt.tight_layout()
     plt.savefig(output_dir / "particle_distributions.png", dpi=200)
+    plt.close()
+
+
+    plt.figure(figsize=(10, 5.5))
+    plt.plot(x_values, random_distribution, label="Random backward result")
+    plt.plot(x_values, guided_distribution, label="Guided reversal result")
+    plt.xlabel("Position")
+    plt.ylabel("Probability")
+    plt.title("KL divergence between guided and random final distributions")
+    plt.text(
+        0.02,
+        0.95,
+        f"D_KL(P_guided || P_random) = {history_kl:.4f} bits",
+        transform=plt.gca().transAxes,
+        va="top",
+        bbox=dict(boxstyle="round", alpha=0.15),
+    )
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(output_dir / "kl_divergence_comparison.png", dpi=200)
     plt.close()
 
     forward_time = np.arange(len(forward_entropy))
@@ -163,6 +209,7 @@ def make_figures():
     print(f"Entropy after random backward attempt: {random_entropy[-1]:.4f} bits")
     print(f"Exact return rate: {np.mean(reversed_positions == INITIAL_POSITION):.4f}")
     print(f"Random return rate: {np.mean(random_positions == INITIAL_POSITION):.4f}")
+    print(f"KL divergence D_KL(P_guided || P_random): {history_kl:.4f} bits")
     print()
     print("memory_fraction, recovered_entropy_fraction, return_rate")
     for fraction, recovery, return_rate in results:
