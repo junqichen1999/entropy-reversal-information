@@ -49,54 +49,54 @@ This is a project-specific interpretation, not a new universal definition of inf
 
 ### 4.1 Random walk
 
-There are \(N\) particles on a one-dimensional integer line. Initially, all particles are placed at the origin:
+There are $N$ particles on a one-dimensional integer line. Initially, all particles are placed at the origin:
 
-$$
+```math
 x_i(0)=0,
 \qquad i=1,\ldots,N.
-$$
+```
 
 At every time step, each particle independently moves one step to the left or right:
 
-$$
+```math
 x_i(t+1)=x_i(t)+r_i(t),
-$$
+```
 
 where
 
-$$
+```math
 r_i(t)\in\{-1,+1\}.
-$$
+```
 
 In the experiment:
 
-- \(N=2000\) particles
-- \(T=80\) forward steps
-- random seed \(=42\)
+- $N=2000$ particles
+- $T=80$ forward steps
+- random seed $=42$
 
 The fixed seed makes the result reproducible.
 
 ### 4.2 Shannon entropy of the particle distribution
 
-Let \(p_x(t)\) be the fraction of particles located at position \(x\) at time \(t\). I calculate the Shannon entropy of this distribution as
+Let $p_x(t)$ be the fraction of particles located at position $x$ at time $t$. I calculate the Shannon entropy of this distribution as
 
-$$
+```math
 S(t)=-\sum_x p_x(t)\log_2 p_x(t).
-$$
+```
 
 At the initial time, all particles are at the same position, so the entropy is approximately zero. During random diffusion, the particles spread across more positions and the entropy increases.
 
 ### 4.3 Exact reversal
 
-During the forward random walk, every value of \(r_i(t)\) is stored.
+During the forward random walk, every value of $r_i(t)$ is stored.
 
 To reverse the process, the stored steps are read in reverse time order and their signs are changed:
 
-$$
+```math
 x_i(t)=x_i(t+1)-r_i(t).
-$$
+```
 
-For example, if a particle previously moved \(+1\), the inverse operation is \(-1\).
+For example, if a particle previously moved $+1$, the inverse operation is $-1$.
 
 ### 4.4 Partial memory
 
@@ -205,7 +205,6 @@ The environment is defined in `environment.yml` and contains:
 - NumPy
 - Matplotlib
 
-
 ## 7. How to Run the Code
 
 ### Step 1: Download or clone the repository
@@ -266,21 +265,21 @@ After exact reversal, all particles return to the origin. The final distribution
 
 ![Entropy over time](figures/entropy_over_time.png)
 
-During forward diffusion, Shannon entropy increases from approximately \(0\) bits to \(4.1673\) bits.
+During forward diffusion, Shannon entropy increases from approximately $0$ bits to $4.1673$ bits.
 
-The random backward attempt does not reproduce the past. Its entropy remains high and reaches approximately \(4.6601\) bits.
+The random backward attempt does not reproduce the past. Its entropy remains high and reaches approximately $4.6601$ bits.
 
-In contrast, exact reversal uses the stored history and reduces the entropy back to approximately \(0\) bits. The important difference is not the word "backward," but whether the correct microscopic information is available.
+In contrast, exact reversal uses the stored history and reduces the entropy back to approximately $0$ bits. The important difference is not the word "backward," but whether the correct microscopic information is available.
 
 At the end of the experiment,
 
-$$
+```math
 I_{\mathrm{reverse}}
 \approx
 4.6601-0
 =
 4.6601\ \text{bits}.
-$$
+```
 
 This value represents the difference between the random and guided processes in this particular simulation.
 
@@ -290,7 +289,7 @@ This value represents the difference between the random and guided processes in 
 
 The updated code calculates
 
-$$
+```math
 D_{\mathrm{KL}}
 \left(
 P_{\mathrm{guided}}
@@ -298,7 +297,7 @@ P_{\mathrm{guided}}
 P_{\mathrm{random}}
 \right)
 \approx 3.9885\ \text{bits}.
-$$
+```
 
 The guided distribution is concentrated at the initial position because the complete movement history is used. The random backward distribution is spread across many positions, and only about $6.3\%$ of particles happen to return to the origin.
 
@@ -327,7 +326,7 @@ The partial-memory experiment produced the following results:
 | 0.875 | 0.747 | 0.882 |
 | 1.000 | 1.000 | 1.000 |
 
-When no movement history is retained, only about \(6.3\%\) of the particles happen to return to the origin, and no meaningful entropy recovery is observed.
+When no movement history is retained, only about $6.3\%$ of the particles happen to return to the origin, and no meaningful entropy recovery is observed.
 
 As the retained-history fraction increases, both the entropy recovery ratio and the particle return rate increase.
 
@@ -367,7 +366,7 @@ This project uses a similar idea. The stored microscopic history strongly constr
 
 The KL-divergence calculation makes this relation explicit:
 
-$$
+```math
 I_{\mathrm{history}}
 =
 D_{\mathrm{KL}}
@@ -376,7 +375,7 @@ P_{\mathrm{guided}}
 \parallel
 P_{\mathrm{random}}
 \right).
-$$
+```
 
 The project is not a calculation of integrated information $\Phi$, because it does not partition the system and compare whole-system and part-system repertoires. However, it shares the more basic IIT idea that information can be understood as a constraint that changes a distribution of possible states.
 
@@ -430,7 +429,7 @@ This project is a simplified model.
 - The system stores every movement without error.
 - The memory and energy costs are not modeled.
 - Shannon entropy of particle positions is not identical to thermodynamic entropy.
-- The proposed \(I_{\mathrm{reverse}}\) is an illustrative project measure, not a standard information-theory quantity.
+- The proposed $I_{\mathrm{reverse}}$ is an illustrative project measure, not a standard information-theory quantity.
 
 Possible future extensions include:
 
