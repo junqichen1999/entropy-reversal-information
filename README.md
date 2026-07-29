@@ -1,7 +1,7 @@
 # Information as Memory for Controlled Entropy Reversal
 
-**Name:** CHEN JUNQI
-Student ID:5807045Z
+**NAME:** CHEN JUNQI
+**STUDENT ID:** 5807045Z
 
 ## 1. Overview
 
