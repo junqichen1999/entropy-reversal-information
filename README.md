@@ -100,33 +100,33 @@ For example, if a particle previously moved \(+1\), the inverse operation is \(-
 
 ### 4.4 Partial memory
 
-Let \(f\in[0,1]\) be the fraction of microscopic movements that are remembered.
+Let $f\in[0,1]$ be the fraction of microscopic movements that are remembered.
 
-- With probability \(f\), the correct inverse movement is used.
-- With probability \(1-f\), a new random movement is used.
+- With probability $f$, the correct inverse movement is used.
+- With probability $1-f$, a new random movement is used.
 
 I define the entropy recovery ratio as
 
-$$
+```math
 R=
 \frac{S_{\mathrm{forward}}-S_{\mathrm{final}}}
      {S_{\mathrm{forward}}-S_{\mathrm{initial}}}.
-$$
+```
 
 Interpretation:
 
-- \(R=0\): no entropy increase is recovered
-- \(R=1\): all entropy increase is recovered
+- $R=0$: no entropy increase is recovered
+- $R=1$: all entropy increase is recovered
 
 ### 4.5 Proposed entropy-reversal information
 
 To compare a random backward attempt with a guided reversal, I propose the following illustrative quantity:
 
-$$
+```math
 I_{\mathrm{reverse}}(t)
 =
 S_{\mathrm{random}}(t)-S_{\mathrm{guided}}(t).
-$$
+```
 
 A large value means that the stored history strongly changes the system's ability to return toward an ordered state.
 
@@ -136,19 +136,19 @@ This quantity is used only as an experimental measure in this project.
 
 The current code directly uses **Shannon entropy**, which was introduced in the lecture as
 
-$$
+```math
 H(P)=-\sum_x p(x)\log_2 p(x).
-$$
+```
 
 In this project, Shannon entropy measures the uncertainty of the particle-position distribution. It is therefore the main quantity used to show the change from an ordered state to a more widely distributed state.
 
 I also add **KL divergence**, which was used in the IIT lecture to compare a constrained distribution with an unconstrained distribution:
 
-$$
+```math
 D_{\mathrm{KL}}(P\parallel Q)
 =
 \sum_x P(x)\log_2\frac{P(x)}{Q(x)}.
-$$
+```
 
 For this project, I define
 
@@ -157,7 +157,7 @@ For this project, I define
 
 Then I calculate
 
-$$
+```math
 I_{\mathrm{history}}
 =
 D_{\mathrm{KL}}
@@ -166,7 +166,7 @@ P_{\mathrm{guided}}
 \parallel
 P_{\mathrm{random}}
 \right).
-$$
+```
 
 This quantity shows how strongly the distribution produced by stored history differs from the no-history baseline. In the language of the IIT lecture, the stored history acts as a constraint that changes the distribution of possible future states.
 
@@ -204,6 +204,7 @@ The environment is defined in `environment.yml` and contains:
 - Python 3.12
 - NumPy
 - Matplotlib
+
 
 ## 7. How to Run the Code
 
